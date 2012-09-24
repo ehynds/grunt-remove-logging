@@ -1,0 +1,12 @@
+console.log("foo");
+console.warn("foo"); console.log("bar");
+console.trace();
+console.error("foo", 'bar', baz);
+  console.log("foo")
+
+ console.warn('foo');
+console.log(foo);
+console.warn([foo]);
+console.log("(foo)");
+foo1 console.log(foo); foo2
+foo1 console.log(foo);foo2;
