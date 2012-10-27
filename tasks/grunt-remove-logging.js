@@ -14,15 +14,27 @@ module.exports = function(grunt) {
   grunt.registerMultiTask("removelogging", "Remove console logging", function() {
     var src = grunt.task.directive(this.file.src, grunt.file.read);
     var opts = this.data.options;
-    grunt.file.write(this.file.dest, grunt.helper("removelogging", src, opts));
+    var result = grunt.helper("removelogging", src, opts);
+    grunt.log.writeln("Removed " + result.count + " logging statements from " + this.file.src);
+    grunt.file.write(this.file.dest, result.src);
   });
 
   grunt.registerHelper("removelogging", function(src, opts) {
+    var counter = 0;
+
     if(!opts) {
       opts = {};
     }
 
-    return src.replace(rConsole, opts.replaceWith || "");
+    src = src.replace(rConsole, function() {
+      counter++;
+      return opts.replaceWith || "";
+    });
+
+    return {
+      src: src,
+      count: counter
+    };
   });
 
 };

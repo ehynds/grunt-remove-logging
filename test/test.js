@@ -106,7 +106,8 @@ exports.tests = {
     test.expect(tests.length);
 
     tests.forEach(function(t) {
-      test.equal(grunt.helper("removelogging", t[0], t[1]), t[2]);
+      var result = grunt.helper("removelogging", t[0], t[1]);
+      test.equal(result.src, t[2]);
     });
 
     test.done();
