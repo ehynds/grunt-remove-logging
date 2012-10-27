@@ -94,6 +94,11 @@ var tests = [
     'console.log("foo (inner parens)");foo;console.warn("(lol)")',
     {},
     "foo;"
+  ],
+  [
+    ';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};',
+    {},
+    ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',
   ]
 ];
 
