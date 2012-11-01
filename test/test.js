@@ -11,6 +11,103 @@ var async = grunt.utils.async;
 // ]
 var tests = [
   [
+    'console.log(foo); bar; console.warn("bar")',
+    {},
+    " bar; "
+  ],
+  [
+    'console.dir({ complex: "objects" }, [ "array" ])',
+    {},
+    ""
+  ],
+  [
+    'console.log("foo (inner parens)")',
+    {},
+    ""
+  ],
+  [
+    'console.log("foo (inner parens)");foo;console.warn("(lol)")',
+    {},
+    "foo;"
+  ],
+  [
+    ';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};',
+    {},
+    ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',
+  ],
+
+  // remove logging directive tests
+  
+  [
+    'console.log("foo");/*RemoveLogging:skip*/',
+    {},
+    'console.log("foo");/*RemoveLogging:skip*/',
+  ],
+  [
+    'console.log("foo")/*RemoveLogging:skip*/',
+    {},
+    'console.log("foo")/*RemoveLogging:skip*/',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/;',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/;',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/;',
+  ],
+  [
+    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;console.log("bar");',
+    {},
+    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;',
+  ],
+  [
+    'console.log("foo");/*RemoveLogging:skip*/console.log("bar");',
+    {},
+    'console.log("foo");/*RemoveLogging:skip*/',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");}',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){}',
+  ],
+  [
+    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");/*RemoveLogging:skip*/}',
+    {},
+    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){console.warn("baz");/*RemoveLogging:skip*/}',
+  ],
+
+  // namespace option tests
+
+  [
+    'logger.log("foo")',
+    { namespace: 'logger' },
+    '',
+  ],
+
+  // methods option tests
+
+  [
+    'console.log("foo");console.error("bar");console.warn("baz");',
+    { methods: [ 'log', 'warn' ]},
+    'console.error("bar");',
+  ],
+
+  // replaceWidth option tests
+
+  [
     'console.log(foo);',
     { replaceWith: "" },
     ""
@@ -74,84 +171,6 @@ var tests = [
     'console && console.log("hi")',
     { replaceWith: "0;" },
     "console && 0;"
-  ],
-  [
-    'console.log(foo); bar; console.warn("bar")',
-    {},
-    " bar; "
-  ],
-  [
-    'console.dir({ complex: "objects" }, [ "array" ])',
-    {},
-    ""
-  ],
-  [
-    'console.log("foo (inner parens)")',
-    {},
-    ""
-  ],
-  [
-    'console.log("foo (inner parens)");foo;console.warn("(lol)")',
-    {},
-    "foo;"
-  ],
-  [
-    ';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};',
-    {},
-    ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',
-  ],
-
-  // remove logging declaration tests
-  
-  [
-    'console.log("foo");/*RemoveLogging:skip*/',
-    {},
-    'console.log("foo");/*RemoveLogging:skip*/',
-  ],
-  [
-    'console.log("foo")/*RemoveLogging:skip*/',
-    {},
-    'console.log("foo")/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-  ],
-  [
-    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;console.log("bar");',
-    {},
-    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;',
-  ],
-  [
-    'console.log("foo");/*RemoveLogging:skip*/console.log("bar");',
-    {},
-    'console.log("foo");/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");}',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){}',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");/*RemoveLogging:skip*/}',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){console.warn("baz");/*RemoveLogging:skip*/}',
   ]
 ];
 

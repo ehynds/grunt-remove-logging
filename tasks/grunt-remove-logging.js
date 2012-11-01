@@ -9,7 +9,7 @@
 module.exports = function(grunt) {
   "use strict";
 
-  var rConsole = /console.(?:log|warn|error|assert|count|clear|group|groupEnd|trace|debug|dir|dirxml|profile|profileEnd|time|timeEnd)\([^;]*\)(?!\s*[;,]?\s*\/\*\s*RemoveLogging:skip\s*\*\/);?/gi;
+  var _ = grunt.utils._;
 
   grunt.registerMultiTask("removelogging", "Remove console logging", function() {
     var src = grunt.task.directive(this.file.src, grunt.file.read);
@@ -21,11 +21,24 @@ module.exports = function(grunt) {
 
   grunt.registerHelper("removelogging", function(src, opts) {
     var counter = 0;
+    var rConsole;
 
     if(!opts) {
       opts = {};
     }
 
+    // Use console as the default namespace
+    if(!("namespace" in opts)) {
+      opts.namespace = "console";
+    }
+
+    // Default methods
+    if(!("methods" in opts) || !_.isArray(opts.methods)) {
+      opts.methods = "log warn error assert count clear group groupEnd groupCollapsed trace debug dir dirxml profile profileEnd time timeEnd timeStamp table exception".split(" ");
+    }
+
+    rConsole = new RegExp(opts.namespace + ".(?:" + opts.methods.join("|") + ")\\([^;]*\\)(?!\\s*[;,]?\\s*\\/\\*\\s*RemoveLogging:skip\\s*\\*\\/);?", "gi");
+    
     src = src.replace(rConsole, function() {
       counter++;
       return opts.replaceWith || "";
