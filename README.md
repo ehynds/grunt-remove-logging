@@ -38,3 +38,13 @@ grunt.initConfig({
 This plugin can be customized by specifying the following options:
 
 * `replaceWith`: A value to replace console.logging statements with. This defaults to an empty string. If you use fancy statements like `console && console.log("foo");`, you may choose to specify a replaceWith value like `0;` so that your scripts don't completely break.
+
+### Skipping Individual Statements
+
+You can tell this task to keep specific logging statements by adding the comment `/*RemoveLogging:skip*/` after the statement:
+
+console.log("foo");/*RemoveLogging:skip*/
+
+- or -
+
+console.log("foo")/*RemoveLogging:skip*/;

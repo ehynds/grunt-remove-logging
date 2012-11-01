@@ -9,7 +9,7 @@
 module.exports = function(grunt) {
   "use strict";
 
-  var rConsole = /console.(?:log|warn|error|assert|count|clear|group|groupEnd|trace|debug|dir|dirxml|profile|profileEnd|time|timeEnd)\([^;]*\);?/gi;
+  var rConsole = /console.(?:log|warn|error|assert|count|clear|group|groupEnd|trace|debug|dir|dirxml|profile|profileEnd|time|timeEnd)\([^;]*\)(?!\s*[;,]?\s*\/\*\s*RemoveLogging:skip\s*\*\/);?/gi;
 
   grunt.registerMultiTask("removelogging", "Remove console logging", function() {
     var src = grunt.task.directive(this.file.src, grunt.file.read);
