@@ -57,4 +57,8 @@ console.log("foo");/*RemoveLogging:skip*/
 // or:
 
 console.log("foo")/*RemoveLogging:skip*/;
+
+// whitespace is fine too, whatever floats your boat:
+
+console.log("foo") /* RemoveLogging:skip */;
 ```

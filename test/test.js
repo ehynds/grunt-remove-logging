@@ -74,6 +74,11 @@ var tests = [
     'bar;console.log("foo") /*RemoveLogging:skip*/;foo;',
   ],
   [
+    'bar;console.log("foo") /* RemoveLogging:skip */;foo;console.log("bar");',
+    {},
+    'bar;console.log("foo") /* RemoveLogging:skip */;foo;',
+  ],
+  [
     'console.log("foo");/*RemoveLogging:skip*/console.log("bar");',
     {},
     'console.log("foo");/*RemoveLogging:skip*/',
