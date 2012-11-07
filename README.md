@@ -4,13 +4,19 @@ This task removes all console logging statements from your source code.
 
 ## Getting Started
 
-Install this plugin with: `grunt install grunt-remove-logging`
+Install this plugin with the command:
 
-Next, add this line to your project's `grunt.js` file:
+```js
+npm install grunt-remove-logging
+```
 
-`grunt.loadNpmTasks("grunt-remove-logging");`
+Next, add this line to your project's grunt file:
 
-Lastly, add the configuration settings (see below) to your grunt.js file.
+```js
+grunt.loadNpmTasks("grunt-remove-logging");
+```
+
+Lastly, add the configuration settings (see below) to your grunt file.
 
 ## Documentation
 
@@ -18,7 +24,7 @@ This task has two required properties, `src` and `dest`. `src` is the path to yo
 
 An example configuration looks like this:
 
-```` javascript
+```js
 grunt.initConfig({
   removelogging: {
     dist: {
@@ -31,22 +37,24 @@ grunt.initConfig({
     }
   }
 });
-````
+```
 
 ### Optional Configuration Properties
 
 This plugin can be customized by specifying the following options:
 
-* `replaceWith`: A value to replace logging statements with. This option defaults to an empty string. If you use fancy statements like `console && console.log("foo");`, you may choose to specify a replaceWith value like `0;` so that your scripts don't completely break.
-* `namespace`: The name of object that logging methods are attached to. Defaults to `console`.
-* `methods`: An array of the method names to remove. Defaults to [all the methods](http://getfirebug.com/wiki/index.php/Console_API) in the Firebug console API. This option is useful if you want to strip out all `log` methods, but keep `warn`.
+* `replaceWith`: A value to replace logging statements with. This option defaults to an empty string. If you use fancy statements like `console && console.log("foo");`, you may choose to specify a `replaceWith` value like `0;` so that your scripts don't completely break.
+* `namespace`: The name of the object that logging methods are attached to. Defaults to `console`. If you use a custom logger, like `MyApp.logger.log(foo)`, you would set this option to `MyApp.logger`.
+* `methods`: An array of method names to remove. Defaults to [all the methods](http://getfirebug.com/wiki/index.php/Console_API) in the Firebug console API. This option is useful if you want to strip out all `log` methods, but keep `warn` for example.
 
 ### Skipping Individual Statements
 
-You can tell this task to keep specific logging statements by adding the comment `/*RemoveLogging:skip*/` after the statement:
+You can tell this task to keep specific logging statements by adding the comment directive `/*RemoveLogging:skip*/` after the statement:
 
-`console.log("foo");/*RemoveLogging:skip*/`
+```js
+console.log("foo");/*RemoveLogging:skip*/
 
-- or -
+// or:
 
-`console.log("foo")/*RemoveLogging:skip*/;`
+console.log("foo")/*RemoveLogging:skip*/;
+```
