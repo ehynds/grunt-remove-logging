@@ -2,17 +2,15 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    test: {
-      files: ["test/**/*.js"]
-    },
-    lint: {
-      files: ["grunt.js", "tasks/**/*.js", "test/**/*.js"]
+    nodeunit: {
+      all: ["test/**/*.js"]
     },
     watch: {
       files: "<config:lint.files>",
       tasks: "default"
     },
     jshint: {
+      all: ["grunt.js", "tasks/**/*.js", "test/**/*.js"],
       options: {
         curly: true,
         eqeqeq: true,
@@ -25,13 +23,14 @@ module.exports = function(grunt) {
         boss: true,
         eqnull: true,
         node: true,
-        es5: true
-      },
-      globals: {}
+        es5: true,
+        globals: {}
+      }
     }
   });
 
-  grunt.loadTasks("tasks");
+  grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-contrib-nodeunit");
 
-  grunt.registerTask("default", "lint test");
+  grunt.registerTask("default", ["jshint", "nodeunit"]);
 };

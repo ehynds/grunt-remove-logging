@@ -1,7 +1,7 @@
 {
   "name" : "grunt-remove-logging",
   "description" : "Grunt task to remove console logging statements",
-  "version" : "0.0.5",
+  "version" : "0.1.0",
   "homepage" : "",
   "author" : {
     "name" : "Eric Hynds",
@@ -23,8 +23,10 @@
   "scripts" : {
     "test" : "grunt test"
   },
-  "dependencies" : {
-    "grunt" : "0.3.x"
+  "devDependencies" : {
+    "grunt" : "0.4.x",
+    "grunt-contrib-jshint": "0.1.1",
+    "grunt-contrib-nodeunit": "0.1.2"
   },
   "keywords" : [
     "gruntplugin", "console", "log", "debugging", "remove", "statements"

@@ -13,5 +13,5 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask("default", "removelogging");
+  grunt.registerTask("default", ["removelogging"]);
 };

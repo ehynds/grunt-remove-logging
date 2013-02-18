@@ -1,6 +1,8 @@
+"use strict";
+
 var grunt = require("grunt");
-var task = require("../tasks/grunt-remove-logging");
-var async = grunt.utils.async;
+var task = require("../tasks/lib/removelogging").init(grunt);
+var async = grunt.util.async;
 
 // each item in the array is a test.
 // the convention is:
@@ -188,11 +190,10 @@ exports.tests = {
     test.expect(tests.length);
 
     tests.forEach(function(t) {
-      var result = grunt.helper("removelogging", t[0], t[1]);
+      var result = task(t[0], t[1]);
       test.equal(result.src, t[2]);
     });
 
     test.done();
   }
-  
 };
