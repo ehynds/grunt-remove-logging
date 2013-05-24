@@ -178,6 +178,21 @@ var tests = [
     'console && console.log("hi")',
     { replaceWith: "0;" },
     "console && 0;"
+  ],
+  [
+    'console.log ("foo");',
+    { replaceWith: "" },
+    ""
+  ],
+  [
+    'pre;console.log    ("foo");post;',
+    { replaceWith: "" },
+    "pre;post;"
+  ],
+  [
+    'console.log ( "foo" );post',
+    { replaceWith: "" },
+    "post"
   ]
 ];
 

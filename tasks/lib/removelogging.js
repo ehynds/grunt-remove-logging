@@ -17,7 +17,7 @@ exports.init = function(grunt) {
       opts.methods = "log warn error assert count clear group groupEnd groupCollapsed trace debug dir dirxml profile profileEnd time timeEnd timeStamp table exception".split(" ");
     }
 
-    rConsole = new RegExp(opts.namespace + ".(?:" + opts.methods.join("|") + ")\\([^;]*\\)(?!\\s*[;,]?\\s*\\/\\*\\s*RemoveLogging:skip\\s*\\*\\/);?", "gi");
+    rConsole = new RegExp(opts.namespace + ".(?:" + opts.methods.join("|") + ")\\s{0,}\\([^;]*\\)(?!\\s*[;,]?\\s*\\/\\*\\s*RemoveLogging:skip\\s*\\*\\/);?", "gi");
 
     src = src.replace(rConsole, function() {
       counter++;
