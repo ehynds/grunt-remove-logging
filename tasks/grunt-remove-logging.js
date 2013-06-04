@@ -16,12 +16,18 @@ module.exports = function(grunt) {
 
     this.files.forEach(function(f) {
       var ret = f.src.map(function(srcFile) {
-        var result = task(grunt.file.read(srcFile), opts);
-        grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
-        return result.src;
+        if (grunt.file.isFile(srcFile)){
+          var result = task(grunt.file.read(srcFile), opts);
+          grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
+          return result.src;
+        }else{
+          grunt.log.error("File not found " + srcFile);
+        }
       }).join("");
 
-      grunt.file.write(f.dest, ret);
+      if(ret){
+        grunt.file.write(f.dest, ret);
+      }
     });
   });
 };
