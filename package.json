@@ -1,12 +1,17 @@
 {
   "name" : "grunt-remove-logging",
   "description" : "Grunt task to remove console logging statements",
-  "version" : "0.1.0",
+  "version" : "0.1.1",
   "homepage" : "",
   "author" : {
     "name" : "Eric Hynds",
     "email" : "ehynds@gmail.com",
     "url" : "http://erichynds.com"
+  },
+  "contributors": {
+    "name": "Thomas Welton",
+    "email": "thomaswelton@me.com",
+    "url": "https://github.com/thomaswelton"
   },
   "repository" : {
     "type" : "git",
