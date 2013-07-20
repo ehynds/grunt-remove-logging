@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         f.src.forEach(function (srcFile) {
           var result = task(grunt.file.read(srcFile), opts);
           grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile + ". (File Overwritten)");
-          grunt.file.write(srcFile, ret);
+          grunt.file.write(srcFile, result.src);
         });
       } else {
         var ret = f.src.map(function(srcFile) {
