@@ -20,7 +20,9 @@ Lastly, add the configuration settings (see below) to your grunt file.
 
 ## Documentation
 
-This task has two required properties, `src` and `dest`. `src` is the path to your source file and `dest` is the file this task will write to (relative to the grunt.js file). If this file already exists **it will be overwritten**.
+This task has two required properties, `src` and `dest`. `src` is the path to
+your source file and `dest` is the file this task will write to (relative to the
+grunt.js file).
 
 An example configuration looks like this:
 
@@ -34,6 +36,19 @@ grunt.initConfig({
       options: {
         // see below for options. this is optional.
       }
+    }
+  }
+});
+```
+
+To run this task against multiple files and **automatically overwrite them**
+with the resultant output, omit the `dist` option:
+
+```js
+grunt.initConfig({
+  removelogging: {
+    dist: {
+      src: "dist/**/*.js" // Each file will be overwritten with the output!
     }
   }
 });
