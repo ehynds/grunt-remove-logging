@@ -9,7 +9,7 @@ exports.init = function(grunt) {
 
     // Use console as the default namespace
     if(!("namespace" in opts)) {
-      opts.namespace = "console";
+      opts.namespace = [ "console" ];
     }
 
     // Default methods

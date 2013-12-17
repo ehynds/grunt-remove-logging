@@ -100,7 +100,7 @@ var tests = [
 
   [
     'logger.log("foo");that.log("foo");this.log("foo")',
-    { namespace: ['logger','that.log','this.log'] },
+    { namespace: ['logger', 'that', 'this'] },
     '',
   ],
 

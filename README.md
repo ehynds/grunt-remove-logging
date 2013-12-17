@@ -44,7 +44,9 @@ grunt.initConfig({
 This plugin can be customized by specifying the following options:
 
 * `replaceWith`: A value to replace logging statements with. This option defaults to an empty string. If you use fancy statements like `console && console.log("foo");`, you may choose to specify a `replaceWith` value like `0;` so that your scripts don't completely break.
-* `namespace`: The name of the object that logging methods are attached to. Defaults to `console`. If you use a custom logger, like `MyApp.logger.log(foo)`, you would set this option to `MyApp.logger`.
+* `namespace`: An array of object names that logging methods are attached to.
+Defaults to `[console]`. If you use a custom logger, like
+`MyApp.logger.log(foo)`, you would set this option to `[MyApp.logger]`.
 * `methods`: An array of method names to remove. Defaults to [all the methods](http://getfirebug.com/wiki/index.php/Console_API) in the Firebug console API. This option is useful if you want to strip out all `log` methods, but keep `warn` for example.
 
 ### Skipping Individual Statements
