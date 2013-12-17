@@ -162,12 +162,12 @@ var tests = [
   [
     'pre console.warn(foo) post',
     { replaceWith: "" },
-    "pre  post"
+    "pre post"
   ],
   [
     'pre console.log(foo + bar) post',
     { replaceWith: "" },
-    "pre  post"
+    "pre post"
   ],
   [
     'console.dir("Testing " + foo, bar);foo;',
@@ -193,6 +193,18 @@ var tests = [
     'console.log ( "foo" );post',
     { replaceWith: "" },
     "post"
+  ],
+
+  // Issue #14 - space between ) and ;
+  [
+    'console.log("foo") ;',
+    { replaceWith: "" },
+    ""
+  ],
+  [
+    'pre;console.log("foo") ;post;',
+    { replaceWith: "" },
+    "pre;post;"
   ]
 ];
 
