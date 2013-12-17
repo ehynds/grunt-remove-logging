@@ -15,18 +15,26 @@ module.exports = function(grunt) {
     var opts = this.options();
 
     this.files.forEach(function(f) {
-      var ret = f.src.map(function(srcFile) {
-        if (grunt.file.isFile(srcFile)){
+      if (typeof f.dest === "undefined") {
+        f.src.forEach(function (srcFile) {
           var result = task(grunt.file.read(srcFile), opts);
-          grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
-          return result.src;
-        }else{
-          grunt.log.error("File not found " + srcFile);
-        }
-      }).join("");
+          grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile + ". (File Overwritten)");
+          grunt.file.write(srcFile, result.src);
+        });
+      } else {
+        var ret = f.src.map(function(srcFile) {
+          if (grunt.file.isFile(srcFile)){
+            var result = task(grunt.file.read(srcFile), opts);
+            grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
+            return result.src;
+          }else{
+            grunt.log.error("File not found " + srcFile);
+          }
+        }).join("");
 
-      if(ret){
-        grunt.file.write(f.dest, ret);
+        if(ret){
+          grunt.file.write(f.dest, ret);
+        }
       }
     });
   });
