@@ -10,3 +10,7 @@ console.warn([foo]);
 console.log("(foo)");
 foo1 console.log(foo); foo2
 foo1 console.log(foo);foo2;
+
+foo1 this.log(foo);bar;
+foo2;that.log(bar);foo;
+

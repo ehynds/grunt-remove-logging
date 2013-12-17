@@ -8,6 +8,11 @@
     "email" : "ehynds@gmail.com",
     "url" : "http://erichynds.com"
   },
+  "contributors": {
+    "name": "Thomas Welton",
+    "email": "thomaswelton@me.com",
+    "url": "https://github.com/thomaswelton"
+  },
   "repository" : {
     "type" : "git",
     "url" : "git://github.com/ehynds/grunt-remove-logging.git"

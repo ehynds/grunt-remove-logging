@@ -99,8 +99,8 @@ var tests = [
   // namespace option tests
 
   [
-    'logger.log("foo")',
-    { namespace: 'logger' },
+    'logger.log("foo");that.log("foo");this.log("foo")',
+    { namespace: ['logger','that.log','this.log'] },
     '',
   ],
 
