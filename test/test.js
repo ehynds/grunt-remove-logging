@@ -18,7 +18,8 @@
     return util.format.apply(global, args);
   }
 
-  var testSetArr = [
+  var replaceWithTests = [
+
     ['console.log(foo);', '%s'],
     ['console.log(foo)', '%s'],
     ['console.warn("foo")', '%s'],
@@ -46,9 +47,9 @@
    * @param  {string} options The options to apply
    * @return {array}             The array of tests configurations
    */
-  function generateTestSet(options) {
+  function generateTestSet(options, tests) {
     var expected = (options && options.replaceWith) || ''; // default is ""
-    return testSetArr.map(function(test) {
+    return tests.map(function(test) {
       return [
         test[0], // string to test
         options,
@@ -166,7 +167,7 @@
     ]
   ];
 
-  tests = tests.concat(generateTestSet({ replaceWith: "" }));
+  tests = tests.concat(generateTestSet({ replaceWith: "" }, replaceWithTests));
 
 
   exports.tests = {
