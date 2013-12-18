@@ -3,8 +3,59 @@
   "use strict";
 
   var grunt = require("grunt");
+  var util = require("util");
   var task = require("../tasks/lib/removelogging").init(grunt);
   var async = grunt.util.async;
+
+  function formatExpected(formatter, expected) {
+    var args = [ formatter ];
+    var numParams = (formatter.match(/%(s|d|j)/g) || []).length;
+
+    for (var i = 0; i < numParams; i++) {
+      args.push(expected);
+    }
+
+    return util.format.apply(global, args);
+  }
+
+  var testSetArr = [
+    ['console.log(foo);', '%s'],
+    ['console.log(foo)', '%s'],
+    ['console.warn("foo")', '%s'],
+    [' console.group("foo")', ' %s'],
+    ['console.groupEnd(\'foo\')', '%s'],
+    ['console.error()', '%s'],
+    ['console.log(arg1, arg2, "foo", arg4)', '%s'],
+    ['console.warn(foo)', '%s'],
+    ['pre console.warn(foo); post', 'pre %s post'],
+    ['pre console.warn(foo) post', 'pre %spost'],
+    ['pre console.log(foo + bar) post', 'pre %spost'],
+    ['console.dir("Testing " + foo, bar);foo;', '%sfoo;'],
+    ['console && console.log("hi")', 'console && %s'],
+    ['console.log ("foo");', '%s'],
+    ['pre;console.log    ("foo");post;', 'pre;%spost;'],
+    ['console.log ( "foo" );post', '%spost'],
+
+    // Issue #14 - space between ) and ;
+    ['console.log("foo") ;', '%s'],
+    ['pre;console.log("foo") ;post;', 'pre;%spost;']
+  ];
+
+  /**
+   * Outputs an array 
+   * @param  {string} options The options to apply
+   * @return {array}             The array of tests configurations
+   */
+  function generateTestSet(options) {
+    var expected = (options && options.replaceWith) || ''; // default is ""
+    return testSetArr.map(function(test) {
+      return [
+        test[0], // string to test
+        options,
+        formatExpected(test[1], expected) // expected output
+      ];
+    });
+  }
 
   // each item in the array is a test.
   // the convention is:
@@ -112,103 +163,11 @@
       'console.log("foo");console.error("bar");console.warn("baz");',
       { methods: [ 'log', 'warn' ]},
       'console.error("bar");',
-    ],
-
-    // replaceWidth option tests
-
-    [
-      'console.log(foo);',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'console.log(foo)',
-      { replaceWith: "0;" },
-      "0;"
-    ],
-    [
-      'console.warn("foo")',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      ' console.group("foo")',
-      { replaceWith: "" },
-      " "
-    ],
-    [
-      'console.groupEnd(\'foo\')',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'console.error()',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'console.log(arg1, arg2, "foo", arg4)',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'console.warn(foo)',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'pre console.warn(foo); post',
-      { replaceWith: "" },
-      "pre  post"
-    ],
-    [
-      'pre console.warn(foo) post',
-      { replaceWith: "" },
-      "pre post"
-    ],
-    [
-      'pre console.log(foo + bar) post',
-      { replaceWith: "" },
-      "pre post"
-    ],
-    [
-      'console.dir("Testing " + foo, bar);foo;',
-      { replaceWith: "bar;" },
-      "bar;foo;"
-    ],
-    [
-      'console && console.log("hi")',
-      { replaceWith: "0;" },
-      "console && 0;"
-    ],
-    [
-      'console.log ("foo");',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'pre;console.log    ("foo");post;',
-      { replaceWith: "" },
-      "pre;post;"
-    ],
-    [
-      'console.log ( "foo" );post',
-      { replaceWith: "" },
-      "post"
-    ],
-
-    // Issue #14 - space between ) and ;
-    [
-      'console.log("foo") ;',
-      { replaceWith: "" },
-      ""
-    ],
-    [
-      'pre;console.log("foo") ;post;',
-      { replaceWith: "" },
-      "pre;post;"
     ]
   ];
+
+  tests = tests.concat(generateTestSet({ replaceWith: "" }));
+
 
   exports.tests = {
     setUp: function(done) {
@@ -226,5 +185,5 @@
       test.done();
     }
   };
-  
+
 })(require);
