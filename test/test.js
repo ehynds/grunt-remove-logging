@@ -18,6 +18,28 @@
     return util.format.apply(global, args);
   }
 
+  function iterateTests(arr, test) {
+    arr.forEach(function(t) {
+      var result = task(t[0], t[1]);
+      test.equal(result.src, t[2]);
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test Templates
+  ///   
+  ///   Each of these should have 2 values.
+  ///   The first is the input to test; the second
+  ///   is the expected output.
+  ///     
+  ///     [ (str)INPUT_TO_TEST, (str)EXPECTED_OUTPUT ]
+  ///     
+  ///   Note: You can use %s for use with the replaceWith option.
+  ///   
+  ///
+  ////////////////////////////////////////////////////////////////////////////////////////
+
   var generalTests = [
     ['console.log("foo (inner parens)")', ""],
     ['console.log(foo); bar; console.warn("bar")', ' bar; '],
@@ -71,8 +93,8 @@
 
   /**
    * Outputs an array of test configurations
-   * @param  {string} test An array of tests templates
-   * @param  {string} options The options to apply
+   * @param  {array}  tests      An array of tests templates
+   * @param  {object} options    The options to apply
    * @return {array}             The array of tests configurations
    */
   function generateTestSet(tests, options) {
@@ -86,34 +108,55 @@
     });
   }
 
-  // each item in the array is a test.
-  // the convention is:
-  // [
-  //    string to test,
-  //    options to pass to the remove_logging helper
-  //    expected result
-  // ]
-  var tests = [];
-
-  tests = tests.concat(generateTestSet(generalTests, {}));
-  tests = tests.concat(generateTestSet(skipRemovalTests, {}));
-  tests = tests.concat(generateTestSet(namespaceTests, { namespace: ['logger', 'that', 'this'] }));
-  tests = tests.concat(generateTestSet(methodTests, { methods: [ 'log', 'warn' ]}));
-  tests = tests.concat(generateTestSet(replaceWithTests, { replaceWith: "" }));
-
-
-  exports.tests = {
+  exports.remove_logging = {
     setUp: function(done) {
       done();
     },
 
-    remove_logging: function(test) {
-      test.expect(tests.length);
+    'mapper-function': function(test) {
+      test.expect(1);
 
-      tests.forEach(function(t) {
-        var result = task(t[0], t[1]);
-        test.equal(result.src, t[2]);
-      });
+      test.equal(generateTestSet(generalTests).length, generalTests.length);
+
+      test.done();
+    },
+
+    general: function(test) {
+      test.expect(generalTests.length);
+
+      iterateTests(generateTestSet(generalTests, {}), test);
+
+      test.done();
+    },
+
+    'skip-removal': function(test) {
+      test.expect(skipRemovalTests.length);
+
+      iterateTests(generateTestSet(skipRemovalTests, {}), test);
+
+      test.done();
+    },
+
+    'namespace': function(test) {
+      test.expect(namespaceTests.length);
+
+      iterateTests(generateTestSet(namespaceTests, { namespace: ['logger', 'that', 'this'] }), test);
+
+      test.done();
+    },
+
+    'methods': function(test) {
+      test.expect(methodTests.length);
+
+      iterateTests(generateTestSet(methodTests, { methods: [ 'log', 'warn' ]}), test);
+
+      test.done();
+    },
+
+    'replaceWith': function(test) {
+      test.expect(replaceWithTests.length);
+
+      iterateTests(generateTestSet(replaceWithTests, { replaceWith: '' }), test);
 
       test.done();
     }
