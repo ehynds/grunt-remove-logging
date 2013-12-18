@@ -40,14 +40,6 @@
   ///
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  var generalTests = [
-    ['console.log("foo (inner parens)")', ""],
-    ['console.log(foo); bar; console.warn("bar")', ' bar; '],
-    ['console.dir({ complex: "objects" }, [ "array" ])', ""],
-    ['console.log("foo (inner parens)");foo;console.warn("(lol)")', "foo;"],
-    [';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};', ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',],
-  ];
-
   var skipRemovalTests = [
     ['console.log("foo")/*RemoveLogging:skip*/', 'console.log("foo")/*RemoveLogging:skip*/'],
     ['console.log("foo");/*RemoveLogging:skip*/', 'console.log("foo");/*RemoveLogging:skip*/'],
@@ -70,7 +62,7 @@
     ['console.log("foo");console.error("bar");console.warn("baz");', '%sconsole.error("bar");%s']
   ];
 
-  var replaceWithTests = [
+  var generalTests = [
     ['console.error()', '%s'],
     ['console.log(foo)', '%s'],
     ['console.warn(foo)', '%s'],
@@ -87,8 +79,13 @@
     ['pre;console.log("foo") ;post;', 'pre;%spost;'], // #14 - space between ) and ;
     ['pre console.log(foo + bar) post', 'pre %spost'],
     ['pre;console.log    ("foo");post;', 'pre;%spost;'],
+    ['console.log("foo (inner parens)")', '%s'],
     ['console.log(arg1, arg2, "foo", arg4)', '%s'],
-    ['console.dir("Testing " + foo, bar);foo;', '%sfoo;']
+    ['console.dir("Testing " + foo, bar);foo;', '%sfoo;'],
+    ['console.log(foo); bar; console.warn("bar")', '%s bar; %s'],
+    ['console.dir({ complex: "objects" }, [ "array" ])', '%s'],
+    ['console.log("foo (inner parens)");foo;console.warn("(lol)")', '%sfoo;%s'],
+    [';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};', ';if(true){functionCall(function namedFun(){%s})};for(var x=1;x<foo.length;x++){fun(){%s}};']
   ];
 
   /**
@@ -154,10 +151,10 @@
     },
 
     'replaceWith': function(test) {
-      test.expect(replaceWithTests.length * 2);
+      test.expect(generalTests.length * 2);
 
-      iterateTests(generateTestSet(replaceWithTests, { replaceWith: '' }), test);
-      iterateTests(generateTestSet(replaceWithTests, { replaceWith: '0;' }), test);
+      iterateTests(generateTestSet(generalTests, { replaceWith: '' }), test);
+      iterateTests(generateTestSet(generalTests, { replaceWith: '0;' }), test);
 
       test.done();
     }
