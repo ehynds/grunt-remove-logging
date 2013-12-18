@@ -154,9 +154,10 @@
     },
 
     'replaceWith': function(test) {
-      test.expect(replaceWithTests.length);
+      test.expect(replaceWithTests.length * 2);
 
       iterateTests(generateTestSet(replaceWithTests, { replaceWith: '' }), test);
+      iterateTests(generateTestSet(replaceWithTests, { replaceWith: '0;' }), test);
 
       test.done();
     }
