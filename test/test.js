@@ -1,226 +1,163 @@
-"use strict";
+(function(require) {
 
-var grunt = require("grunt");
-var task = require("../tasks/lib/removelogging").init(grunt);
-var async = grunt.util.async;
+  "use strict";
 
-// each item in the array is a test.
-// the convention is:
-// [
-//    string to test,
-//    options to pass to the remove_logging helper
-//    expected result
-// ]
-var tests = [
-  [
-    'console.log(foo); bar; console.warn("bar")',
-    {},
-    " bar; "
-  ],
-  [
-    'console.dir({ complex: "objects" }, [ "array" ])',
-    {},
-    ""
-  ],
-  [
-    'console.log("foo (inner parens)")',
-    {},
-    ""
-  ],
-  [
-    'console.log("foo (inner parens)");foo;console.warn("(lol)")',
-    {},
-    "foo;"
-  ],
-  [
-    ';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};',
-    {},
-    ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',
-  ],
+  var grunt = require("grunt");
+  var util = require("util");
+  var task = require("../tasks/lib/removelogging").init(grunt);
+  var async = grunt.util.async;
 
-  // remove logging directive tests
-  
-  [
-    'console.log("foo");/*RemoveLogging:skip*/',
-    {},
-    'console.log("foo");/*RemoveLogging:skip*/',
-  ],
-  [
-    'console.log("foo")/*RemoveLogging:skip*/',
-    {},
-    'console.log("foo")/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/bar;',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;',
-  ],
-  [
-    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;console.log("bar");',
-    {},
-    'bar;console.log("foo") /*RemoveLogging:skip*/;foo;',
-  ],
-  [
-    'bar;console.log("foo") /* RemoveLogging:skip */;foo;console.log("bar");',
-    {},
-    'bar;console.log("foo") /* RemoveLogging:skip */;foo;',
-  ],
-  [
-    'console.log("foo");/*RemoveLogging:skip*/console.log("bar");',
-    {},
-    'console.log("foo");/*RemoveLogging:skip*/',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");}',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){}',
-  ],
-  [
-    'bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");/*RemoveLogging:skip*/}',
-    {},
-    'bar;console.log("foo")/*RemoveLogging:skip*/;function(){console.warn("baz");/*RemoveLogging:skip*/}',
-  ],
+  function formatExpected(formatter, expected) {
+    var args = [ formatter ];
+    var numParams = (formatter.match(/%(s|d|j)/g) || []).length;
 
-  // namespace option tests
+    for (var i = 0; i < numParams; i++) {
+      args.push(expected);
+    }
 
-  [
-    'logger.log("foo");that.log("foo");this.log("foo")',
-    { namespace: ['logger', 'that', 'this'] },
-    '',
-  ],
+    return util.format.apply(global, args);
+  }
 
-  // methods option tests
-
-  [
-    'console.log("foo");console.error("bar");console.warn("baz");',
-    { methods: [ 'log', 'warn' ]},
-    'console.error("bar");',
-  ],
-
-  // replaceWidth option tests
-
-  [
-    'console.log(foo);',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'console.log(foo)',
-    { replaceWith: "0;" },
-    "0;"
-  ],
-  [
-    'console.warn("foo")',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    ' console.group("foo")',
-    { replaceWith: "" },
-    " "
-  ],
-  [
-    'console.groupEnd(\'foo\')',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'console.error()',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'console.log(arg1, arg2, "foo", arg4)',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'console.warn(foo)',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'pre console.warn(foo); post',
-    { replaceWith: "" },
-    "pre  post"
-  ],
-  [
-    'pre console.warn(foo) post',
-    { replaceWith: "" },
-    "pre post"
-  ],
-  [
-    'pre console.log(foo + bar) post',
-    { replaceWith: "" },
-    "pre post"
-  ],
-  [
-    'console.dir("Testing " + foo, bar);foo;',
-    { replaceWith: "bar;" },
-    "bar;foo;"
-  ],
-  [
-    'console && console.log("hi")',
-    { replaceWith: "0;" },
-    "console && 0;"
-  ],
-  [
-    'console.log ("foo");',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'pre;console.log    ("foo");post;',
-    { replaceWith: "" },
-    "pre;post;"
-  ],
-  [
-    'console.log ( "foo" );post',
-    { replaceWith: "" },
-    "post"
-  ],
-
-  // Issue #14 - space between ) and ;
-  [
-    'console.log("foo") ;',
-    { replaceWith: "" },
-    ""
-  ],
-  [
-    'pre;console.log("foo") ;post;',
-    { replaceWith: "" },
-    "pre;post;"
-  ]
-];
-
-exports.tests = {
-  setUp: function(done) {
-    done();
-  },
-
-  remove_logging: function(test) {
-    test.expect(tests.length);
-
-    tests.forEach(function(t) {
+  function iterateTests(arr, test) {
+    arr.forEach(function(t) {
       var result = task(t[0], t[1]);
       test.equal(result.src, t[2]);
     });
-
-    test.done();
   }
-};
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test Templates
+  ///   
+  ///   Each of these should have 2 values.
+  ///   The first is the input to test; the second
+  ///   is the expected output.
+  ///     
+  ///     [ (str)INPUT_TO_TEST, (str)EXPECTED_OUTPUT ]
+  ///     
+  ///   Note: You can use %s for use with the replaceWith option.
+  ///   
+  ///
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  var skipRemovalTests = [
+    ['console.log("foo")/*RemoveLogging:skip*/', 'console.log("foo")/*RemoveLogging:skip*/'],
+    ['console.log("foo");/*RemoveLogging:skip*/', 'console.log("foo");/*RemoveLogging:skip*/'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/', 'bar;console.log("foo")/*RemoveLogging:skip*/'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/;', 'bar;console.log("foo")/*RemoveLogging:skip*/;'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/bar;', 'bar;console.log("foo")/*RemoveLogging:skip*/bar;'],
+    ['console.log("foo");/*RemoveLogging:skip*/console.log("bar");', 'console.log("foo");/*RemoveLogging:skip*/'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");', 'bar;console.log("foo")/*RemoveLogging:skip*/;%s'],
+    ['bar;console.log("foo") /*RemoveLogging:skip*/;foo;console.log("bar");', 'bar;console.log("foo") /*RemoveLogging:skip*/;foo;'],
+    ['bar;console.log("foo") /* RemoveLogging:skip */;foo;console.log("bar");', 'bar;console.log("foo") /* RemoveLogging:skip */;foo;'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");}', 'bar;console.log("foo")/*RemoveLogging:skip*/;function(){}'],
+    ['bar;console.log("foo")/*RemoveLogging:skip*/;console.log("bar");function(){console.warn("baz");/*RemoveLogging:skip*/}', 'bar;console.log("foo")/*RemoveLogging:skip*/;function(){console.warn("baz");/*RemoveLogging:skip*/}'],
+  ];
+
+  var namespaceTests = [
+    ['console.log("foo");logger.log("foo");that.log("foo");this.log("foo")', 'console.log("foo");']
+  ];
+
+  var methodTests = [
+    ['console.log("foo");console.error("bar");console.warn("baz");', '%sconsole.error("bar");%s']
+  ];
+
+  var generalTests = [
+    ['console.error()', '%s'],
+    ['console.log(foo)', '%s'],
+    ['console.warn(foo)', '%s'],
+    ['console.log(foo);', '%s'],
+    ['console.warn("foo")', '%s'],
+    ['console.log("foo") ;', '%s'], // #14 - space between ) and ;
+    ['console.log ("foo");', '%s'],
+    [' console.group("foo")', ' %s'],
+    ['console.groupEnd(\'foo\')', '%s'],
+    ['pre console.warn(foo) post', 'pre %spost'],
+    ['console.log ( "foo" );post', '%spost'],
+    ['pre console.warn(foo); post', 'pre %s post'],
+    ['console && console.log("hi")', 'console && %s'],
+    ['pre;console.log("foo") ;post;', 'pre;%spost;'], // #14 - space between ) and ;
+    ['pre console.log(foo + bar) post', 'pre %spost'],
+    ['pre;console.log    ("foo");post;', 'pre;%spost;'],
+    ['console.log("foo (inner parens)")', '%s'],
+    ['console.log(arg1, arg2, "foo", arg4)', '%s'],
+    ['console.dir("Testing " + foo, bar);foo;', '%sfoo;'],
+    ['console.log(foo); bar; console.warn("bar")', '%s bar; %s'],
+    ['console.dir({ complex: "objects" }, [ "array" ])', '%s'],
+    ['console.log("foo (inner parens)");foo;console.warn("(lol)")', '%sfoo;%s'],
+    [';if(true){functionCall(function namedFun(){console.log("test", args);})};for(var x=1;x<foo.length;x++){fun(){console.warn("foo")}};', ';if(true){functionCall(function namedFun(){%s})};for(var x=1;x<foo.length;x++){fun(){%s}};']
+  ];
+
+  /**
+   * Outputs an array of test configurations
+   * @param  {array}  tests      An array of tests templates
+   * @param  {object} options    The options to apply
+   * @return {array}             The array of tests configurations
+   */
+  function generateTestSet(tests, options) {
+    var expected = (options && options.replaceWith) || ''; // default is ""
+    return tests.map(function(test) {
+      return [
+        test[0], // string to test
+        options,
+        formatExpected(test[1], expected) // expected output
+      ];
+    });
+  }
+
+  exports.remove_logging = {
+    setUp: function(done) {
+      done();
+    },
+
+    'mapper-function': function(test) {
+      test.expect(1);
+
+      test.equal(generateTestSet(generalTests).length, generalTests.length);
+
+      test.done();
+    },
+
+    general: function(test) {
+      test.expect(generalTests.length);
+
+      iterateTests(generateTestSet(generalTests, {}), test);
+
+      test.done();
+    },
+
+    'skip-removal': function(test) {
+      test.expect(skipRemovalTests.length);
+
+      iterateTests(generateTestSet(skipRemovalTests, {}), test);
+
+      test.done();
+    },
+
+    'namespace': function(test) {
+      test.expect(namespaceTests.length);
+
+      iterateTests(generateTestSet(namespaceTests, { namespace: ['logger', 'that', 'this'] }), test);
+
+      test.done();
+    },
+
+    'methods': function(test) {
+      test.expect(methodTests.length);
+
+      iterateTests(generateTestSet(methodTests, { methods: [ 'log', 'warn' ]}), test);
+
+      test.done();
+    },
+
+    'replaceWith': function(test) {
+      test.expect(generalTests.length * 2);
+
+      iterateTests(generateTestSet(generalTests, { replaceWith: '' }), test);
+      iterateTests(generateTestSet(generalTests, { replaceWith: '0;' }), test);
+
+      test.done();
+    }
+  };
+
+})(require);
