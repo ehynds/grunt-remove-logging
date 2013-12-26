@@ -42,7 +42,7 @@ grunt.initConfig({
 ```
 
 To run this task against multiple files and **automatically overwrite them**
-with the resultant output, omit the `dist` option:
+with the resultant output, omit the `dest` option:
 
 ```js
 grunt.initConfig({
