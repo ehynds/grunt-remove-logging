@@ -1,39 +1,45 @@
 {
-  "name" : "grunt-remove-logging",
-  "description" : "Grunt task to remove console logging statements",
-  "version" : "0.2.0",
-  "homepage" : "",
-  "author" : {
-    "name" : "Eric Hynds",
-    "email" : "ehynds@gmail.com",
-    "url" : "http://erichynds.com"
+  "name": "grunt-remove-logging",
+  "description": "Grunt task to remove console logging statements",
+  "version": "0.2.0",
+  "homepage": "",
+  "author": {
+    "name": "Eric Hynds",
+    "email": "ehynds@gmail.com",
+    "url": "http://erichynds.com"
   },
   "contributors": {
     "name": "Thomas Welton",
     "email": "thomaswelton@me.com",
     "url": "https://github.com/thomaswelton"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "git://github.com/ehynds/grunt-remove-logging.git"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ehynds/grunt-remove-logging.git"
   },
-  "bugs" : {
-    "url" : "https://github.com/ehynds/grunt-remove-logging/issues"
+  "bugs": {
+    "url": "https://github.com/ehynds/grunt-remove-logging/issues"
   },
-  "main" : "grunt.js",
-  "bin" : "bin/grunt-remove-logging",
-  "engines" : {
-    "node" : "*"
+  "main": "grunt.js",
+  "bin": "bin/grunt-remove-logging",
+  "engines": {
+    "node": "*"
   },
-  "scripts" : {
-    "test" : "grunt test"
+  "scripts": {
+    "test": "grunt test"
   },
-  "devDependencies" : {
-    "grunt" : "~0.4.2",
+  "devDependencies": {
+    "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-nodeunit": "~0.2.2"
+    "grunt-contrib-nodeunit": "~0.2.2",
+    "grunt-contrib-watch": "~0.5.3"
   },
-  "keywords" : [
-    "gruntplugin", "console", "log", "debugging", "remove", "statements"
+  "keywords": [
+    "gruntplugin",
+    "console",
+    "log",
+    "debugging",
+    "remove",
+    "statements"
   ]
 }
