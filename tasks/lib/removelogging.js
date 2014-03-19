@@ -14,7 +14,7 @@ exports.init = function(grunt) {
 
     // Default methods
     if(!("methods" in opts) || !_.isArray(opts.methods)) {
-      opts.methods = "log warn error assert count clear group groupEnd groupCollapsed trace debug dir dirxml profile profileEnd time timeEnd timeStamp table exception".split(" ");
+      opts.methods = "log info warn error assert count clear group groupEnd groupCollapsed trace debug dir dirxml profile profileEnd time timeEnd timeStamp table exception".split(" ");
     }
 
     rConsole = new RegExp("(" + opts.namespace.join("|") + ")" + ".(?:" + opts.methods.join("|") + ")\\s{0,}\\([^;]*\\)(?!\\s*[;,]?\\s*\\/\\*\\s*RemoveLogging:skip\\s*\\*\\/)\\s{0,};?", "gi");
