@@ -1,7 +1,7 @@
 {
   "name" : "grunt-remove-logging",
   "description" : "Grunt task to remove console logging statements",
-  "version" : "0.2.0",
+  "version" : "0.2.1",
   "homepage" : "",
   "author" : {
     "name" : "Eric Hynds",
