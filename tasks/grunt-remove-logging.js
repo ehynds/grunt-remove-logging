@@ -16,7 +16,8 @@ module.exports = function(grunt) {
 
     var process = function(srcFile) {
       var result = task(grunt.file.read(srcFile), opts);
-      grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
+      var type = grunt.option('type') === "comment" ? "Commented " : "Removed ";
+      grunt.log.writeln(type + result.count + " logging statements from " + srcFile);
       return result;
     };
 
