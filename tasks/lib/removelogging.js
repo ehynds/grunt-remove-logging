@@ -20,10 +20,20 @@ exports.init = function(grunt) {
     rConsole = new RegExp("(" + opts.namespace.join("|") + ")" + ".(?:" + opts.methods.join("|") + ")\\s{0,}\\([^;]*\\)(?!\\s*[;,]?\\s*\\/\\*\\s*RemoveLogging:skip\\s*\\*\\/)\\s{0,};?", "gi");
 
     src = src.replace(rConsole, function() {
-      counter++;
-      return opts.replaceWith || "";
+      var type = grunt.option('type') || "comment";
+      var matches = src.match(rConsole);
+      if(type === 'comment'){
+        var commented = [];
+        counter++;
+        for(var i = 0; i < matches.length; i++){
+          commented[i] = "//" + matches[i];
+          return commented[i];
+        }       
+      }else {
+        counter++;
+        return opts.replaceWith || "";
+      }
     });
-
     return {
       src: src,
       count: counter
