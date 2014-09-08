@@ -14,9 +14,15 @@ module.exports = function(grunt) {
   grunt.registerMultiTask("removelogging", "Remove console logging", function() {
     var opts = this.options();
 
+    var statementCount = 0, fileCount = 0;
+
     var process = function(srcFile) {
       var result = task(grunt.file.read(srcFile), opts);
-      grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
+      statementCount += result.count;
+      fileCount++;
+      if (opts.verbose) {
+        grunt.log.writeln("Removed " + result.count + " logging statements from " + srcFile);
+      }
       return result;
     };
 
@@ -40,5 +46,9 @@ module.exports = function(grunt) {
         }
       }
     });
+
+    if (!opts.verbose) {
+      grunt.log.writeln("Checked " + fileCount + " files, removed " + statementCount + " logging statements");
+    }
   });
 };

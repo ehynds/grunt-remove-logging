@@ -63,6 +63,7 @@ This plugin can be customized by specifying the following options:
 Defaults to `[ 'console', 'window.console' ]`. If you use a custom logger, like
 `MyApp.logger.log(foo)`, you would set this option to `[MyApp.logger]`.
 * `methods`: An array of method names to remove. Defaults to [all the methods](http://getfirebug.com/wiki/index.php/Console_API) in the Firebug console API. This option is useful if you want to strip out all `log` methods, but keep `warn` for example.
+* `verbose`: Boolean value, whether to show count of logging statements removed for each file. Defaults to true. If false, a single summary line is logged to grunt instead.
 
 ### Skipping Individual Statements
 
