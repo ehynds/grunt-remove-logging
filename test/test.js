@@ -37,6 +37,12 @@ var tests = [
     {},
     ';if(true){functionCall(function namedFun(){})};for(var x=1;x<foo.length;x++){fun(){}};',
   ],
+  
+  [
+	'function(error){console.log(error)})("myerror")',
+	{},
+	'function(error){})("myerror")'
+  ],
 
   // remove logging directive tests
   
