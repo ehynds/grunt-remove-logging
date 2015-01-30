@@ -17,6 +17,7 @@ module.exports = function(grunt) {
     var statementCount = 0, fileCount = 0;
 
     var process = function(srcFile) {
+      opts.srcFile = srcFile;
       var result = task(grunt.file.read(srcFile), opts);
       statementCount += result.count;
       fileCount++;
