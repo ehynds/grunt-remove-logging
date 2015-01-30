@@ -3,7 +3,7 @@ exports.init = function(grunt) {
 
   var _ = grunt.util._;
 
-  return function(src, opts) {
+  return function(src, opts, origin) {
     var counter = 0;
     var rConsole;
 
@@ -26,12 +26,13 @@ exports.init = function(grunt) {
      * they don't, with a message pointing to the location of the problem. 
      * By default it doesn't fix the problem for you, just points you in the direction of the problem so you can fix your code.
      * If option 'forceProperLineEnd' is set to true though, it will add the semi-colon to the end of the line.
+     * Addresses issue 18: https://github.com/ehynds/grunt-remove-logging/issues/18
      */
     if( _.isArray(opts.methods) ) {
       opts.methods.forEach(function(meth) {
 
-        var splitter = "console."+meth
-            ,newSrc = "";
+        var splitter = "console."+meth,
+            newSrc = "";
         src.split( splitter ).forEach(function(str, i) {
 
           newSrc += (i>0 ? splitter : "");
@@ -39,8 +40,8 @@ exports.init = function(grunt) {
           var modStr = null;
 
           if( i>0 && str.indexOf("\n") !== -1 ) {
-            var thisLine = str.split("\n")[0].trim()
-                ,lastChar = thisLine[ thisLine.length-1 ];
+            var thisLine = str.split("\n")[0].trim(),
+              lastChar = thisLine[ thisLine.length-1 ];
 
             if( thisLine.indexOf("RemoveLogging:skip") === -1 && lastChar !== ";" ) {
               if( opts.forceProperLineEnd ) {
@@ -49,12 +50,12 @@ exports.init = function(grunt) {
                 
                 grunt.log.warn( "WARNING: Added semi-colon to line ".yellow +
                   "\nconsole.".cyan + meth.cyan + thisLine.cyan +
-                  "\nIn file ".yellow + opts.srcFile.yellow + 
+                  "\nIn file ".yellow + origin.yellow + 
                   "\n\n" );
               } else {
                 grunt.log.warn( "WARNING: line with console statement does not finish with ';'. ".red+
                   "This will likely cause unexpected results in 'grunt-remove-logging'.".red+
-                  "\nIn file ".yellow + opts.srcFile.yellow + ", search for the following string to debug it: ".yellow + 
+                  "\nIn file ".yellow + origin.yellow + ", search for the following string to debug it: ".yellow + 
                   "\nconsole.".cyan + meth.cyan + thisLine.cyan+
                   "\n\n" );
               }
@@ -65,7 +66,9 @@ exports.init = function(grunt) {
           
         });
 
-        if( newSrc != "" ) src = newSrc;
+        if( newSrc !== "" ) {
+          src = newSrc;
+        }
       
       });
     }
