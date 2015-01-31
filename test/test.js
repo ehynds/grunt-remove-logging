@@ -218,6 +218,17 @@ var tests = [
     { methods: [ 'log' ] },
     "var xxxx;\n"
   ],
+  // testing actual JS files, so that any discrepencies between OSs and line breaks can be captured
+  [
+    grunt.file.read("./test/samples/sample1-before.js"),
+    { methods: [ 'log' ] },
+    grunt.file.read("./test/samples/sample1-after.js")
+  ],
+  [
+    grunt.file.read("./test/samples/sample2-before.js"),
+    { methods: [ 'log' ] },
+    grunt.file.read("./test/samples/sample2-after.js")
+  ],
   [
     'var xxxx;console.warn()\n',
     { methods: [ 'warn' ], forceProperLineEnd: true },
@@ -228,7 +239,6 @@ var tests = [
     { methods: [ 'warn' ] },
     "var xxxx;\n"
   ]
-  // TODO: tests done on Windows 8.1. Need to run on OSX, mainly because of different line break syntax
 ];
 
 exports.tests = {
