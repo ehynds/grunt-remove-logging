@@ -43,7 +43,7 @@ exports.init = function(grunt) {
             var thisLine = str.split("\n")[0].trim(),
               lastChar = thisLine[ thisLine.length-1 ];
 
-            if( thisLine.indexOf("RemoveLogging:skip") === -1 && lastChar !== ";" ) {
+            if( thisLine.indexOf("RemoveLogging:skip") === -1 && lastChar !== ";" && thisLine.indexOf("function(") === -1 ) {
               if( opts.forceProperLineEnd ) {
 
                 modStr = str.replace( "\n", ";\n" );

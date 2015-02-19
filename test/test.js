@@ -213,6 +213,11 @@ var tests = [
     { methods: [ 'log' ], forceProperLineEnd: true },
     "var xxxx;\n"
   ],
+  [ // if the keyword "function(" is found on the same line, it will ignore it
+    'var xxxx;console.log = function()\n',
+    { methods: [ 'log' ], forceProperLineEnd: true },
+    "var xxxx;console.log = function()\n"
+  ],
   [
     'var xxxx;console.log();\n',
     { methods: [ 'log' ] },
