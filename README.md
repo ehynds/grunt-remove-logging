@@ -64,6 +64,7 @@ Defaults to `[ 'console', 'window.console' ]`. If you use a custom logger, like
 `MyApp.logger.log(foo)`, you would set this option to `[MyApp.logger]`.
 * `methods`: An array of method names to remove. Defaults to [all the methods](http://getfirebug.com/wiki/index.php/Console_API) in the Firebug console API. This option is useful if you want to strip out all `log` methods, but keep `warn` for example.
 * `verbose`: Boolean value, whether to show count of logging statements removed for each file. Defaults to true. If false, a single summary line is logged to grunt instead.
+* `forceProperLineEnd`: Boolean value, defaults to `false`. Set to true and it will add a semi-colon to the end of the line, if it is missing. This stops some cases from causing malformed JS. If you leave it as `false`, you will simply get a console warning, telling you where the missing semi-colon is located.
 
 ### Skipping Individual Statements
 

@@ -205,6 +205,44 @@ var tests = [
     'pre;console.log("foo") ;post;',
     { replaceWith: "" },
     "pre;post;"
+  ],
+
+  // Issue #18 - no ';' at line end breaking code
+  [
+    'var xxxx;console.log()\n',
+    { methods: [ 'log' ], forceProperLineEnd: true },
+    "var xxxx;\n"
+  ],
+  [ // if the keyword "function(" is found on the same line, it will ignore it
+    'var xxxx;console.log = function()\n',
+    { methods: [ 'log' ], forceProperLineEnd: true },
+    "var xxxx;console.log = function()\n"
+  ],
+  [
+    'var xxxx;console.log();\n',
+    { methods: [ 'log' ] },
+    "var xxxx;\n"
+  ],
+  // testing actual JS files, so that any discrepencies between OSs and line breaks can be captured
+  [
+    grunt.file.read("./test/samples/sample1-before.js"),
+    { methods: [ 'log' ] },
+    grunt.file.read("./test/samples/sample1-after.js")
+  ],
+  [
+    grunt.file.read("./test/samples/sample2-before.js"),
+    { methods: [ 'log' ] },
+    grunt.file.read("./test/samples/sample2-after.js")
+  ],
+  [
+    'var xxxx;console.warn()\n',
+    { methods: [ 'warn' ], forceProperLineEnd: true },
+    "var xxxx;\n"
+  ],
+  [
+    'var xxxx;console.warn();\n',
+    { methods: [ 'warn' ] },
+    "var xxxx;\n"
   ]
 ];
 
@@ -216,8 +254,8 @@ exports.tests = {
   remove_logging: function(test) {
     test.expect(tests.length);
 
-    tests.forEach(function(t) {
-      var result = task(t[0], t[1]);
+    tests.forEach(function(t, i) {
+      var result = task(t[0], t[1], "test"+i);
       test.equal(result.src, t[2]);
     });
 

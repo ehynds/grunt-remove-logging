@@ -3,14 +3,14 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     nodeunit: {
-      all: ["test/**/*.js"]
+      all: ["test/**/*.js", "!test/samples/*"]
     },
     watch: {
       files: "<config:lint.files>",
       tasks: "default"
     },
     jshint: {
-      all: ["grunt.js", "tasks/**/*.js", "test/**/*.js"],
+      all: ["grunt.js", "tasks/**/*.js", "test/**/*.js", "!test/samples/*"],
       options: {
         curly: true,
         eqeqeq: true,
