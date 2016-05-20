@@ -205,6 +205,18 @@ var tests = [
     'pre;console.log("foo") ;post;',
     { replaceWith: "" },
     "pre;post;"
+  ],
+
+  // Logging with semicolon
+  [
+    'console.log("Ok;");',
+    { replaceWith: "" },
+    ""
+  ],
+  [
+    'console.log(["Test", "Ok"].map(function(s){return s;}));',
+    { replaceWith: "" },
+    ""
   ]
 ];
 
