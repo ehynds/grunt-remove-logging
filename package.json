@@ -2,6 +2,7 @@
   "name" : "grunt-remove-logging",
   "description" : "Grunt task to remove console logging statements",
   "version" : "0.2.1",
+  "license" : "MIT",
   "homepage" : "",
   "author" : {
     "name" : "Eric Hynds",
